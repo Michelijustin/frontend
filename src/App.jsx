@@ -85,5 +85,27 @@ const EMOTIONS = {
 };
 
 export default function App() {
-  
+  const [selected, setSelected] = useState(null);
+  const [response, setResponse] = useState(null);
+
+  function selectEmotion(key) {
+    setSelected(key);
+    setResponse(null);
+  }
+
+  function generate() {
+    if (!selected) return;
+    const list = EMOTIONS[selected];
+    const pick = list[Math.floor(Math.random() * list.length)];
+    setResponse(pick);
+  }
+
+  function copyResponse() {
+    if (!response) return;
+    const text = `${response.fact}\n${response.interpretation}\n${response.feeling}\n${response.action}`;
+    navigator.clipboard?.writeText(text);
+    // small UX feedback
+    alert("Texto copiado ✅");
+  }
+
 }
