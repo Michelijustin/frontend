@@ -125,6 +125,48 @@ export default function App() {
             </button>
           </div>
         </header>
+
+        <main className="main">
+          <section className="panel left">
+            
+            <div className="panel-head">
+              <h3>Como você está?</h3>
+              <p className="muted">Escolha uma emoção para receber clareza prática.</p>
+            </div>
+
+            <div className="grid">
+              {Object.keys(THEMES).map((k) => {
+                const t = THEMES[k];
+                const isActive = selected === k;
+                return (
+                  <motion.button
+                    key={k}
+                    className={`emo-btn ${isActive ? "active" : ""}`}
+                    onClick={() => selectEmotion(k)}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{
+                      border: isActive ? `1px solid ${BRAND.accent}` : "1px solid rgba(255,255,255,0.04)",
+                      boxShadow: isActive ? `0 8px 30px ${t.primary}33` : "0 6px 18px rgba(0,0,0,0.18)",
+                    }}
+                  >
+                    <div className="emo-icon" style={{ background: `linear-gradient(135deg, ${t.primary}, ${BRAND.primary})` }}>
+                      {t.icon}
+                    </div>
+                    <div className="emo-label">{k}</div>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            <div className="panel-actions">
+              <button className="btn-primary" onClick={generate} aria-disabled={!selected}>
+                Gerar Raio-X
+              </button>
+            </div>
+
+          </section>
+        </main>
       </div>
     </div>
   )
