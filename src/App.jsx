@@ -108,4 +108,25 @@ export default function App() {
     alert("Texto copiado ✅");
   }
 
+   return (
+    <div className="app-root" style={{ background: BRAND.bg }}>
+      <div className="app-shell">
+        <header className="topbar">
+          <div className="brand">
+            <div className="brand-avatar">❤</div>
+            <div className="brand-text">
+              <div className="brand-title">ClarezaEmocional</div>
+              <div className="brand-sub">Transforme sentimento em ação</div>
+            </div>
+          </div>
+          <div className="actions">
+            <button className="btn-ghost" onClick={() => { setSelected(null); setResponse(null); }}>
+              Reset
+            </button>
+          </div>
+        </header>
+      </div>
+    </div>
+  )
+
 }
