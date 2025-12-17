@@ -224,11 +224,14 @@ export default function App() {
                    )}
                </AnimatePresence>
             </div>
-          </section>
-                  
+          </section>                 
         </main>
+
+        <footer className="footer">
+          <div>Todos os direitos reservados</div>
+        </footer>
+
       </div>
     </div>
   )
-
 }
