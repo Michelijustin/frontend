@@ -1,0 +1,83 @@
+:root{
+  --bg: #0b0b10;
+  --card-glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.06);
+  --muted: rgba(255,255,255,0.65);
+  --accent: #5CE1E6;
+  --brand: #6C38FF;
+  --radius: 14px;
+  --ff: 'Poppins', 'Inter', 'Roboto Mono', system-ui, sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family:var(--ff);
+  background: linear-gradient(180deg, #05050a 0%, #0b0b10 100%);
+  -webkit-font-smoothing:antialiased;
+  color:#fff;
+}
+
+.app-root{min-height:100vh; padding:36px 20px; display:flex; align-items:center; justify-content:center;}
+.app-shell{width:100%; max-width:1200px;}
+
+.topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px}
+.brand{display:flex; gap:12px; align-items:center}
+.brand-avatar{
+  width:62px; height:62px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+  box-shadow: 0 10px 30px rgba(108,56,255,0.18), inset 0 -6px 18px rgba(0,0,0,0.18);
+  font-size:24px;
+  transform:translateY(-2px);
+}
+.brand-title{font-weight:700; font-size:18px}
+.brand-sub{font-size:13px; color:var(--muted)}
+
+.main{display:grid; grid-template-columns: 1fr 1.05fr; gap:20px; align-items:start}
+
+.panel{background:var(--card-glass); border-radius:var(--radius); padding:18px; border:1px solid var(--glass-border); backdrop-filter: blur(8px); box-shadow: 0 8px 30px rgba(2,2,8,0.6);}
+.panel-head h3{margin:0; font-size:16px}
+.panel-head .muted{font-size:13px; color:var(--muted); margin-top:6px}
+
+.grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:12px; margin-top:14px}
+.emo-btn{
+  display:flex; flex-direction:column; align-items:center; gap:10px; padding:14px; border-radius:12px; cursor:pointer;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:#fff; border:1px solid rgba(255,255,255,0.03); transition:all .18s; text-transform:capitalize; min-height:110px;
+}
+.emo-btn .emo-icon{width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; color:#000; box-shadow: 0 8px 28px rgba(0,0,0,0.35);}
+.emo-btn.active{ transform: translateY(-6px); }
+
+.panel-actions{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px}
+.btn-primary{background:var(--brand); color:#000; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; box-shadow: 0 8px 26px rgba(108,56,255,0.18)}
+.btn-primary[aria-disabled="true"]{opacity:0.5; cursor:not-allowed}
+.btn-ghost{background:transparent; color:var(--muted); border:2px solid rgba(255, 255, 255, 0.712); padding:8px 12px; border-radius:10px; cursor:pointer}
+
+.palette-note{display:flex; align-items:center; gap:10px; color:var(--muted)}
+.palette-note .dot{width:12px; height:12px; border-radius:6px;}
+
+.result-area{min-height:220px; display:flex; align-items:center; justify-content:center; padding:8px}
+.empty-card{display:flex; flex-direction:column; align-items:center; gap:12px; color:var(--muted); padding:24px}
+.empty-illustration{font-size:36px}
+.empty-text{max-width:360px; text-align:center}
+
+.result-card{width:100%; border-radius:12px; overflow:hidden; display:flex; flex-direction:column}
+.result-header{padding:14px 16px; display:flex; justify-content:space-between; align-items:center}
+.result-title{display:flex; gap:12px; align-items:center}
+.result-icon{width:46px; height:46px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px}
+.h4{font-weight:800; font-size:16px}
+.result-body{padding:16px; background:linear-gradient(180deg,#fff 0%, #fbfbfd 100%); color:#111}
+.row{display:flex; gap:12px; margin-bottom:10px; align-items:flex-start}
+.label{width:110px; font-weight:700; color:#333}
+.value{flex:1; background:#fff; padding:10px 12px; border-radius:8px; border:1px solid rgba(0,0,0,0.04)}
+
+.result-footer{display:flex; gap:8px; margin-top:12px; justify-content:flex-end}
+.btn-copy{background:transparent; color:#333; border:2px solid rgba(0, 0, 0, 0.591); padding:8px 12px; border-radius:8px; cursor:pointer}
+
+.footer{display:flex; justify-content:center; margin-top:30px; color:var(--muted); font-size:13px;  border-top: 1px solid var(--muted);padding-top: 15px;}
+
+@media (max-width: 880px){
+  .main{grid-template-columns:1fr; }
+  .brand-avatar{width:52px;height:52px}
+}
