@@ -87,6 +87,7 @@ const EMOTIONS = {
 export default function App() {
   const [selected, setSelected] = useState(null);
   const [response, setResponse] = useState(null);
+  const [lastIndex, setLastIndex] = useState(null);
 
   function selectEmotion(key) {
     setSelected(key);
@@ -96,9 +97,14 @@ export default function App() {
   function generate() {
     if (!selected) return;
     const list = EMOTIONS[selected];
-    const pick = list[Math.floor(Math.random() * list.length)];
-    setResponse(pick);
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * list.length);
+    } while (newIndex === lastIndex && list.length > 1);
+    setLastIndex(newIndex);
+    setResponse(list[newIndex]);
   }
+
 
   function copyResponse() {
     if (!response) return;
