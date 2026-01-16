@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
+const ResultPanel = lazy(() => import("./components/ResultPanel"));
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 
@@ -23,64 +24,304 @@ const THEMES = {
 
 const EMOTIONS = {
   ansiedade: [
-    { fact: "Seu corpo parece tenso ou acelerado.", interpretation: "Você assumiu resultados negativos antecipadamente.", feeling: "Medo + tensão.", action: "Respire 10 vezes pausadamente." },
-    { fact: "Pensamentos repetitivos estão presentes.", interpretation: "Sua mente está tentando prever o pior.", feeling: "Inquietação.", action: "Conte 5 objetos ao redor por 20s." },
-    { fact: "Sensação de aperto no peito.", interpretation: "Você interpretou desconforto como ameaça.", feeling: "Alerta + desconforto.", action: "Beba devagar um copo de água." },
-    { fact: "Dificuldade de concentração.", interpretation: "Você está dividindo atenção demais.", feeling: "Confusão.", action: "Faça pausa de 2 minutos sem telefone." },
-    { fact: "Preocupação com o futuro.", interpretation: "Você está supervalorizando incertezas.", feeling: "Ansiedade antecipatória.", action: "Anote 1 passo pequeno e faça agora." },
-    { fact: "Pensou em possíveis erros.", interpretation: "Você generalizou um erro para tudo.", feeling: "Vergonha misturada ao medo.", action: "Escreva uma ação corretiva simples." },
-    { fact: "Sono pouco ou agitado.", interpretation: "A mente não encontra descanso.", feeling: "Cansaço nervoso.", action: "Respire 4-4-4 (inspire, segure, expire por 4s)." },
-    { fact: "Foco em problemas passados.", interpretation: "Você está ruminando experiências.", feeling: "Pressão mental.", action: "Escolha uma coisa que você resolveu bem hoje." },
+  {
+    fact: "Seu corpo está mais tenso ou acelerado agora.",
+    interpretation: "Sua mente pode estar tentando te proteger antecipando cenários que ainda não aconteceram.",
+    feeling: "Medo misturado com tensão.",
+    action: "Respire devagar 10 vezes, puxando o ar pelo nariz e soltando lentamente pela boca."
+  },
+  {
+    fact: "Pensamentos estão se repetindo sem parar.",
+    interpretation: "Você pode estar tentando ter controle sobre algo incerto.",
+    feeling: "Inquietação mental.",
+    action: "Olhe ao redor e identifique 5 coisas que você consegue ver agora."
+  },
+  {
+    fact: "Existe uma sensação de aperto no peito.",
+    interpretation: "Seu corpo reagiu como se estivesse diante de uma ameaça.",
+    feeling: "Alerta e desconforto.",
+    action: "Coloque a mão no peito e respire contando 4 segundos para inspirar e 6 para soltar o ar."
+  },
+  {
+    fact: "Está difícil manter o foco.",
+    interpretation: "Sua atenção pode estar dividida entre muitas preocupações.",
+    feeling: "Confusão e cansaço.",
+    action: "Faça uma pausa de 2 minutos sem celular ou estímulos."
+  },
+  {
+    fact: "Preocupações com o futuro estão presentes.",
+    interpretation: "Você está lidando com incertezas que ainda não têm resposta.",
+    feeling: "Ansiedade antecipatória.",
+    action: "Escolha apenas um pequeno passo possível e foque nele agora."
+  },
+  {
+    fact: "Erros passados voltaram à sua mente.",
+    interpretation: "Um erro acabou ganhando mais peso do que realmente tem.",
+    feeling: "Vergonha misturada com medo.",
+    action: "Anote uma coisa que você faria diferente hoje, sem se julgar."
+  },
+  {
+    fact: "Seu sono não tem sido reparador.",
+    interpretation: "Sua mente pode não estar encontrando descanso.",
+    feeling: "Cansaço nervoso.",
+    action: "Respire no ritmo 4-4-4: inspire, segure e solte o ar por 4 segundos."
+  },
+  {
+    fact: "Pensamentos sobre o passado surgiram.",
+    interpretation: "Você pode estar ruminando situações que já terminaram.",
+    feeling: "Pressão mental.",
+    action: "Lembre-se de algo que você conseguiu resolver hoje, mesmo que pequeno."
+  }
   ],
   insegurança: [
-    { fact: "Você se comparou com alguém.", interpretation: "Suas falhas parecem maiores do que são.", feeling: "Insegurança + dúvida.", action: "Lembre-se de uma conquista recente." },
-    { fact: "Recebeu feedback e ficou abalado.", interpretation: "Você personalizou a crítica.", feeling: "Vulnerabilidade.", action: "Anote 1 ponto útil do feedback." },
-    { fact: "Evita expor ideias por medo.", interpretation: "Você supõe julgamento severo.", feeling: "Timidez + tensão.", action: "Compartilhe uma ideia pequena com um amigo." },
-    { fact: 'Se sente deslocada em um grupo.', interpretation: 'Você acredita que não pertence.', feeling: 'Solidão.', action: 'Diga internamente: "Posso aprender aqui".' },
-    { fact: "Dúvida sobre suas escolhas.", interpretation: "Você imagina todas as falhas possíveis.", feeling: "Incerteza.", action: "Reveja 1 motivo pelo qual escolheu isso." },
-    { fact: "Preocupação com aparência/percepção.", interpretation: "Você acredita que é sempre avaliada.", feeling: "Exposição desconfortável.", action: "Escolha uma peça que te traga confiança." },
-    { fact: "Ansiedade social leve.", interpretation: "Você espera rejeição.", feeling: "Apreensão.", action: "Planeje uma fala curta para quebrar o gelo." },
-    { fact: 'Dificuldade em aceitar elogios.', interpretation: 'Você minimiza seus pontos fortes.', feeling: 'Autocrítica.', action: 'Aceite um elogio dizendo apenas \"obrigada\".' },
+  {
+    fact: "Você se comparou com outra pessoa.",
+    interpretation: "Suas próprias qualidades podem ter ficado invisíveis nesse momento.",
+    feeling: "Dúvida e insegurança.",
+    action: "Lembre-se de uma conquista sua, mesmo que simples."
+  },
+  {
+    fact: "Um feedback te abalou.",
+    interpretation: "Talvez você tenha levado essa fala como algo pessoal demais.",
+    feeling: "Vulnerabilidade.",
+    action: "Anote apenas um ponto útil do feedback e deixe o resto ir."
+  },
+  {
+    fact: "Hesitou em expor suas ideias.",
+    interpretation: "Pode existir o medo de julgamento ou rejeição.",
+    feeling: "Timidez e tensão.",
+    action: "Compartilhe uma ideia pequena com alguém de confiança."
+  },
+  {
+    fact: "Você se sentiu deslocada em um grupo.",
+    interpretation: "Isso não significa que você não pertença.",
+    feeling: "Solidão.",
+    action: "Lembre a si mesma que se sentir deslocada não significa que você não pertença."
+  },
+  {
+    fact: "Surgiram dúvidas sobre suas escolhas.",
+    interpretation: "Você pode estar focando mais nos riscos do que nos motivos que te trouxeram até aqui.",
+    feeling: "Incerteza.",
+    action: "Relembre um motivo que fez você escolher esse caminho."
+  },
+  {
+    fact: "Preocupação com a forma como é vista.",
+    interpretation: "Talvez você esteja se sentindo observada mais do que realmente está.",
+    feeling: "Desconforto.",
+    action: "Faça algo simples que já te ajudou a se sentir mais confiante antes."
+  },
+  {
+    fact: "Ansiedade social apareceu.",
+    interpretation: "Você pode estar esperando rejeição antes mesmo dela existir.",
+    feeling: "Apreensão.",
+    action: "Planeje uma frase simples para iniciar uma conversa."
+  },
+  {
+    fact: "Foi difícil aceitar um elogio.",
+    interpretation: "Seus pontos fortes podem estar sendo minimizados por você mesma.",
+    feeling: "Autocrítica.",
+    action: "Aceite o elogio apenas dizendo 'obrigada'. Isso já é suficiente."
+  }
   ],
   cansaço: [
-    { fact: "Olhos pesados e mente lenta.", interpretation: "Seu corpo pede descanso.", feeling: "Exaustão.", action: "Faça alongamento de 1 minuto." },
-    { fact: "Procrastinação frequente.", interpretation: "Cansaço reduz energia de ação.", feeling: "Letargia.", action: "Defina uma tarefa de 5 minutos." },
-    { fact: "Irritabilidade aumentada.", interpretation: "Fadiga reduz paciência.", feeling: "Frustração por cansaço.", action: "Beba água e descanse 10 minutos." },
-    { fact: "Sono irregular recente.", interpretation: "Rotina de sono foi afetada.", feeling: "Corpo desregulado.", action: "Desconecte telas 30 minutos antes de dormir." },
-    { fact: "Dificuldade com tarefas simples.", interpretation: "O cérebro precisa de recarga.", feeling: "Lentidão.", action: "Faça uma breve soneca (15-20min)." },
-    { fact: "Sensação de peso no corpo.", interpretation: "Você está acumulando tarefas sem pausa.", feeling: "Cansaço físico.", action: "Caminhe 5 minutos ao ar livre." },
-    { fact: "Perda de interesse temporária.", interpretation: "Atividades ficam menos atrativas.", feeling: "Desânimo.", action: "Faça algo que foi prazeroso por 3 minutos." },
-    { fact: "Falta de clareza mental.", interpretation: "Capacidade de decisão reduzida.", feeling: "Neblina mental.", action: "Liste 3 prioridades pequenas." },
+  {
+    fact: "Seus olhos e sua mente estão pesados.",
+    interpretation: "Seu corpo está pedindo descanso.",
+    feeling: "Exaustão.",
+    action: "Alongue o corpo por 1 minuto, sem pressa."
+  },
+  {
+    fact: "Você tem adiado tarefas simples.",
+    interpretation: "O cansaço pode estar reduzindo sua energia de ação.",
+    feeling: "Letargia.",
+    action: "Permita-se começar pequeno, sem se cobrar rendimento."
+  },
+  {
+    fact: "Irritação apareceu com mais facilidade.",
+    interpretation: "A fadiga pode estar diminuindo sua paciência.",
+    feeling: "Frustração por cansaço.",
+    action: "Beba um copo de água e respire fundo."
+  },
+  {
+    fact: "Seu sono está irregular.",
+    interpretation: "Sua rotina pode estar desorganizada.",
+    feeling: "Desregulação.",
+    action: "Desligue telas 30 minutos antes de dormir hoje."
+  },
+  {
+    fact: "Até tarefas simples parecem difíceis.",
+    interpretation: "Seu cérebro pode precisar de uma pausa.",
+    feeling: "Lentidão.",
+    action: "Descanse por 15 minutos sem culpa."
+  },
+  {
+    fact: "Sensação de peso no corpo.",
+    interpretation: "Você pode estar acumulando tarefas sem descanso.",
+    feeling: "Cansaço físico.",
+    action: "Caminhe por 5 minutos, se possível ao ar livre."
+  },
+  {
+    fact: "Perdeu o interesse em coisas que gostava.",
+    interpretation: "O cansaço pode estar abafando o prazer.",
+    feeling: "Desânimo.",
+    action: "Esteja por alguns minutos perto de algo que você costumava gostar, sem se cobrar."
+  },
+  {
+    fact: "Pensar com clareza está difícil.",
+    interpretation: "Sua capacidade de decisão pode estar reduzida.",
+    feeling: "Neblina mental.",
+    action: "Coloque no papel o que estiver passando pela sua mente."
+  }
   ],
   frustração: [
-    { fact: "Algo não saiu como planejado.", interpretation: "Você espera perfeição constante.", feeling: "Irritação + pressão.", action: "Respire profundamente 3x e reavalie." },
-    { fact: "Repetição de erros.", interpretation: "Você se culpa por não aprender rápido.", feeling: "Frustração acumulada.", action: "Escolha um ajuste pequeno e aplique." },
-    { fact: "Bloqueio criativo.", interpretation: "Você força soluções impossíveis agora.", feeling: "Travamento mental.", action: "Troque de atividade por 10 minutos." },
-    { fact: "Conflito com outra pessoa.", interpretation: "Você personalizou a resposta do outro.", feeling: "Raiva contida.", action: "Escreva 1 frase para acalmar e não enviar." },
-    { fact: "Expectativa alta sobre resultado.", interpretation: "Você criou uma meta rígida demais.", feeling: "Decepção.", action: "Reduza a meta em 1 passo realizável." },
-    { fact: "Tarefas empilhadas.", interpretation: "Você sente que tudo é urgente.", feeling: "Pressão.", action: "Classifique 3 tarefas por prioridade." },
-    { fact: "Sentiu-se injustiçada.", interpretation: "Você internalizou opinião alheia.", feeling: "Magoa.", action: "Escreva o que gostaria de dizer calmamente." },
-    { fact: "Fracasso percebido.", interpretation: "Você amplificou um erro.", feeling: "Desânimo e raiva.", action: "Liste 1 aprendizado desse episódio." },
+  {
+    fact: "Algo não saiu como esperado.",
+    interpretation: "Talvez você esteja se cobrando além do necessário.",
+    feeling: "Irritação.",
+    action: "Respire fundo 3 vezes antes de reagir."
+  },
+  {
+    fact: "O mesmo erro aconteceu novamente.",
+    interpretation: "Aprender leva tempo, mesmo quando parece repetitivo.",
+    feeling: "Frustração acumulada.",
+    action: "Escolha um ajuste pequeno para tentar diferente."
+  },
+  {
+    fact: "Você se sente travada.",
+    interpretation: "Talvez esteja exigindo uma solução imediata.",
+    feeling: "Bloqueio mental.",
+    action: "Levante, beba água ou caminhe por 2 minutos, sem tentar resolver nada."
+  },
+  {
+    fact: "Houve conflito com alguém.",
+    interpretation: "A reação do outro pode não ser totalmente sobre você.",
+    feeling: "Raiva contida.",
+    action: "Escreva o que sente sem enviar para ninguém."
+  },
+  {
+    fact: "A expectativa estava muito alta.",
+    interpretation: "A meta pode ter ficado rígida demais.",
+    feeling: "Decepção.",
+    action: "Reduza a meta para algo possível hoje."
+  },
+  {
+    fact: "Muitas tarefas acumuladas.",
+    interpretation: "Tudo pode parecer urgente ao mesmo tempo.",
+    feeling: "Pressão.",
+    action: "Escolha apenas uma tarefa para começar."
+  },
+  {
+    fact: "Sentimento de injustiça.",
+    interpretation: "Você pode ter internalizado a opinião de outra pessoa.",
+    feeling: "Magoa.",
+    action: "Reconheça internamente o que você sente."
+  },
+  {
+    fact: "Um erro parece definir tudo.",
+    interpretation: "Esse erro ocupou mais espaço do que merece.",
+    feeling: "Desânimo.",
+    action: "Anote um aprendizado desse momento."
+  }
   ],
   paz: [
-    { fact: "Momento de calma atual.", interpretation: "Você está presente no agora.", feeling: "Tranquilidade.", action: "Respire agradecendo uma conquista." },
-    { fact: "Sente-se alinhada.", interpretation: "Seu ritmo pessoal funciona bem.", feeling: "Equilíbrio.", action: "Reserve 5 minutos para contemplar." },
-    { fact: "Paz interior temporária.", interpretation: "Você encontrou um espaço segura.", feeling: "Serenidade.", action: "Escreva 1 pensamento positivo." },
-    { fact: "Relaxamento físico.", interpretation: "O corpo não exige ação urgente.", feeling: "Descanso.", action: "Faça alongamento leve e sorria." },
-    { fact: "Boas relações no momento.", interpretation: "Conexões trazem sentido.", feeling: "Gratidão.", action: "Envie uma mensagem simples de agradecimento." },
-    { fact: "Rotina equilibrada.", interpretation: "Há organização na sua vida agora.", feeling: "Satisfação.", action: "Planeje um pequeno prazer para o fim do dia." },
-    { fact: "Clareza sobre prioridades.", interpretation: "Objetivos estão alinhados.", feeling: "Foco sereno.", action: "Liste 1 meta alcançável desta semana." },
-    { fact: "Momento de confiança.", interpretation: "Você reconhece sua força.", feeling: "Calma confiante.", action: "Celebre com uma pequena pausa de alegria." },
+  {
+    fact: "Você percebe um momento de calma.",
+    interpretation: "Você está mais conectada com o presente.",
+    feeling: "Tranquilidade.",
+    action: "Respire agradecendo algo simples."
+  },
+  {
+    fact: "Seu ritmo parece equilibrado.",
+    interpretation: "Você encontrou um fluxo que funciona agora.",
+    feeling: "Estabilidade.",
+    action: "Reserve 5 minutos para apenas estar presente."
+  },
+  {
+    fact: "O corpo está relaxado.",
+    interpretation: "Não há urgência neste momento.",
+    feeling: "Descanso.",
+    action: "Alongue-se suavemente."
+  },
+  {
+    fact: "As relações estão leves.",
+    interpretation: "Conexões trazem apoio emocional.",
+    feeling: "Gratidão.",
+    action: "Envie uma mensagem simples de agradecimento."
+  },
+  {
+    fact: "Clareza sobre prioridades.",
+    interpretation: "Seus objetivos estão mais alinhados.",
+    feeling: "Foco sereno.",
+    action: "Defina uma meta pequena para a semana."
+  },
+  {
+    fact: "Sensação de segurança interna.",
+    interpretation: "Você reconhece sua própria força.",
+    feeling: "Confiança tranquila.",
+    action: "Celebre com uma pequena pausa."
+  },
+  {
+    fact: "Pensamentos mais organizados.",
+    interpretation: "Sua mente está menos sobrecarregada.",
+    feeling: "Leveza.",
+    action: "Anote algo positivo desse momento."
+  },
+  {
+    fact: "Momento de aceitação.",
+    interpretation: "Neste momento, não há urgência nem exigência.",
+    feeling: "Serenidade.",
+    action: "Perceba que não existe urgência agora. Você pode simplesmente estar."
+  }
   ],
   alegria: [
-    { fact: "Você está animada agora.", interpretation: "Situação trouxe prazer imediato.", feeling: "Entusiasmo.", action: "Compartilhe a alegria com alguém." },
-    { fact: "Algo deu certo recentemente.", interpretation: "Você obteve um resultado positivo.", feeling: "Orgulho saudável.", action: "Anote 1 detalhe que ajudou." },
-    { fact: "Gratidão presente.", interpretation: "Você percebeu algo bom.", feeling: "Calor emocional.", action: "Respire e agradeça internamente." },
-    { fact: "Motivação elevada.", interpretation: "Você tem energia para criação.", feeling: "Empolgação.", action: "Comece uma tarefa curta agora." },
-    { fact: "Sorriso fácil.", interpretation: "Pequenas coisas te fazem bem.", feeling: "Leveza.", action: "Permita-se 5 minutos de celebração." },
-    { fact: "Conexão humana positiva.", interpretation: "Interação gerou afeto.", feeling: "Alegria compartilhada.", action: "Diga algo simples e gentil a alguém." },
-    { fact: "Descoberta inspiradora.", interpretation: "Algo novo capturou sua atenção.", feeling: "Curiosidade feliz.", action: "Pesquise por 5 minutos sobre isso." },
-    { fact: "Pequeno sucesso.", interpretation: "Você avançou em um objetivo.", feeling: "Satisfação.", action: "Marque essa conquista no seu diário." },
+  {
+    fact: "Você se sente animada.",
+    interpretation: "Algo despertou entusiasmo em você.",
+    feeling: "Empolgação.",
+    action: "Compartilhe essa alegria com alguém."
+  },
+  {
+    fact: "Algo deu certo recentemente.",
+    interpretation: "Seu esforço gerou resultado.",
+    feeling: "Orgulho saudável.",
+    action: "Anote o que contribuiu para isso."
+  },
+  {
+    fact: "Gratidão está presente.",
+    interpretation: "Você percebeu algo bom no agora.",
+    feeling: "Calor emocional.",
+    action: "Respire e reconheça isso internamente."
+  },
+  {
+    fact: "Energia para criar.",
+    interpretation: "Sua motivação está elevada.",
+    feeling: "Entusiasmo.",
+    action: "Comece uma tarefa curta agora."
+  },
+  {
+    fact: "Sorriso surge com facilidade.",
+    interpretation: "Pequenas coisas estão fazendo bem.",
+    feeling: "Leveza.",
+    action: "Permita-se aproveitar."
+  },
+  {
+    fact: "Conexão positiva com alguém.",
+    interpretation: "Essa troca gerou afeto.",
+    feeling: "Alegria compartilhada.",
+    action: "Diga algo gentil a essa pessoa."
+  },
+  {
+    fact: "Algo novo te inspirou.",
+    interpretation: "Sua curiosidade foi ativada.",
+    feeling: "Curiosidade feliz.",
+    action: "Explore isso por 5 minutos."
+  },
+  {
+    fact: "Você avançou em algo importante.",
+    interpretation: "Mesmo um pequeno passo é progresso.",
+    feeling: "Satisfação.",
+    action: "Reconheça essa conquista."
+  }
   ],
 };
 
@@ -173,64 +414,16 @@ export default function App() {
 
           </section>
 
-          <section className="panel right">
-            <div className="panel-head">
-              <h3>Resultado</h3>
-              <p className="muted">Receba fatos, interpretação, sentimento e uma ação prática.</p>
-            </div>
-
-            <div className="result-area">
-              <AnimatePresence mode="wait">
-                {response ? (
-                  <motion.article
-                    key={selected}
-                    className="result-card"
-                    initial={{ opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 12 }}
-                    transition={{ duration: 0.42 }}
-                  >
-                    <div className="result-header" style={{ background: `linear-gradient(90deg, ${THEMES[selected].primary}, ${BRAND.primary})` }}>
-                      <div className="result-title">
-                        <div className="result-icon">{THEMES[selected].icon}</div>
-                        <div>
-                          <div className="h4" style={{ textTransform: "capitalize" }}>{selected}</div>
-                          <div className="muted">Seu Raio-X Emocional</div>
-                        </div>
-                      </div>
-
-                       <div className="result-controls">
-                        <button className="btn-ghost" onClick={() => generate()}>Gerar outra</button>
-                      </div>
-                    </div>
-
-                    <div className="result-body">
-                      <div className="row"><div className="label">Fato</div><div className="value">{response.fact}</div></div>
-                      <div className="row"><div className="label">Interpretação</div><div className="value">{response.interpretation}</div></div>
-                      <div className="row"><div className="label">Sentimento</div><div className="value">{response.feeling}</div></div>
-                      <div className="row"><div className="label">Ação</div><div className="value">{response.action}</div></div>
-
-                      <div className="result-footer">
-                        <button className="btn-copy" onClick={copyResponse}>Copiar</button>
-                      </div>
-                    </div>
-                  </motion.article>
-
-                  ) : (
-                  <motion.div
-                    key="empty"
-                    className="empty-card"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    <div className="empty-illustration">💭</div>
-                    <div className="empty-text">Selecione uma emoção à esquerda e clique em <strong>Gerar Raio-X</strong>.</div>
-                  </motion.div>
-                   )}
-               </AnimatePresence>
-            </div>
-          </section>                 
+          <Suspense fallback={<div className="panel right">Carregando resultado...</div>}>
+            <ResultPanel
+              response={response}
+              selected={selected}
+              THEMES={THEMES}
+              generate={generate}
+              copyResponse={copyResponse}
+            />
+          </Suspense>
+                
         </main>
 
         <footer className="footer">
