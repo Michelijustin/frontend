@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 const ResultPanel = lazy(() => import("./components/ResultPanel"));
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
@@ -329,6 +329,25 @@ export default function App() {
   const [selected, setSelected] = useState(null);
   const [response, setResponse] = useState(null);
   const [lastIndex, setLastIndex] = useState(null);
+
+  useEffect(() => {
+    if (response && selected) {
+      const dataToSave = {
+        selected,
+        response,
+      };
+      localStorage.setItem("lastEmotionResult", JSON.stringify(dataToSave));
+    }
+  }, [response, selected]);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem("lastEmotionResult");
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      setSelected(parsed.selected);
+      setResponse(parsed.response);
+    }
+  }, []);
 
   function selectEmotion(key) {
     setSelected(key);
