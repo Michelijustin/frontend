@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from "react";
 const ResultPanel = lazy(() => import("./components/ResultPanel"));
+import ResultModal from "./components/ResultModal";
 import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 
@@ -329,6 +330,7 @@ export default function App() {
   const [selected, setSelected] = useState(null);
   const [response, setResponse] = useState(null);
   const [lastIndex, setLastIndex] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (response && selected) {
@@ -356,14 +358,18 @@ export default function App() {
 
   function generate() {
     if (!selected) return;
+
     const list = EMOTIONS[selected];
     let newIndex;
     do {
       newIndex = Math.floor(Math.random() * list.length);
     } while (newIndex === lastIndex && list.length > 1);
+
     setLastIndex(newIndex);
     setResponse(list[newIndex]);
+    setIsModalOpen(true); // 👈 abre o modal
   }
+
 
 
   function copyResponse() {
@@ -433,7 +439,8 @@ export default function App() {
 
           </section>
 
-          <Suspense fallback={<div className="panel right">Carregando resultado...</div>}>
+         <Suspense fallback={<div className="panel right">Carregando resultado...</div>}>
+          {!isModalOpen && (
             <ResultPanel
               response={response}
               selected={selected}
@@ -441,7 +448,10 @@ export default function App() {
               generate={generate}
               copyResponse={copyResponse}
             />
-          </Suspense>
+          )}
+        </Suspense>
+
+
                 
         </main>
 
@@ -450,6 +460,14 @@ export default function App() {
         </footer>
 
       </div>
+      <ResultModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        response={response}
+        selected={selected}
+        THEMES={THEMES}
+      />
+
     </div>
   )
 }

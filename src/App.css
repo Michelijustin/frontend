@@ -77,6 +77,37 @@ body{
 
 .footer{display:flex; justify-content:center; margin-top:30px; color:var(--muted); font-size:13px;  border-top: 1px solid var(--muted);padding-top: 15px;}
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #0b0b10;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  color: white;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+}
+
+
 @media (max-width: 880px){
   .main{grid-template-columns:1fr; }
   .brand-avatar{width:52px;height:52px}
