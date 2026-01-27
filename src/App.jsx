@@ -2,6 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from "react";
 const ResultPanel = lazy(() => import("./components/ResultPanel"));
 import ResultModal from "./components/ResultModal";
 import { motion, AnimatePresence } from "framer-motion";
+import { FiX } from "react-icons/fi";
 import "./App.css";
 
 const BRAND = {

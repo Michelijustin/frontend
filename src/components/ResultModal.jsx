@@ -19,7 +19,8 @@ export default function ResultModal({ isOpen, onClose, response, selected, THEME
           exit={{ scale: 0.9, y: 20 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <button className="modal-close" onClick={onClose}>✕</button>
+          
+
 
           <div
             className="result-header"
